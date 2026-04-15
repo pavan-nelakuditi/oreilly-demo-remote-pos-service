@@ -1,0 +1,130 @@
+name: Postman Onboarding
+
+on:
+  workflow_dispatch:
+    inputs:
+      workspace_id:
+        description: Existing Postman workspace ID to reuse
+        required: false
+        type: string
+      spec_id:
+        description: Existing Postman spec ID to reuse
+        required: false
+        type: string
+      baseline_collection_id:
+        description: Existing baseline collection ID to reuse
+        required: false
+        type: string
+      smoke_collection_id:
+        description: Existing smoke collection ID to reuse
+        required: false
+        type: string
+      contract_collection_id:
+        description: Existing contract collection ID to reuse
+        required: false
+        type: string
+      mock_url:
+        description: Existing mock server URL to reuse
+        required: false
+        type: string
+      monitor_id:
+        description: Existing monitor ID to reuse
+        required: false
+        type: string
+      collection_sync_mode:
+        description: Collection lifecycle policy
+        required: true
+        type: choice
+        default: refresh
+        options:
+          - refresh
+          - version
+      spec_sync_mode:
+        description: Spec lifecycle policy
+        required: true
+        type: choice
+        default: update
+        options:
+          - update
+          - version
+      release_label:
+        description: Optional release label for versioned sync
+        required: false
+        type: string
+      monitor_cron:
+        description: Optional cron expression for monitor scheduling
+        required: false
+        type: string
+      requester_email:
+        description: Requester email for workspace membership
+        required: false
+        default: workshop.owner@example.com
+        type: string
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pavan-nelakuditi/oreilly-shared-contracts
+          ref: v0
+          path: shared-contracts
+          token: ${{ secrets.SHARED_CONTRACTS_READ_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Validate and bundle spec
+        run: npm run validate:specs
+      - name: Publish bundled spec branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          rm -rf /tmp/bundled-spec
+          mkdir -p /tmp/bundled-spec
+          cd /tmp/bundled-spec
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp "$GITHUB_WORKSPACE/dist/openapi.bundled.yaml" ./openapi.yaml
+          git add openapi.yaml
+          git commit -m "chore: publish bundled spec"
+          git branch -M bundled-specs
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push --force origin bundled-specs
+      - name: Run Postman API onboarding
+        uses: postman-cs/postman-api-onboarding-action@main
+        with:
+          project-name: ${{ github.event.repository.name }}
+          workspace-id: ${{ github.event.inputs.workspace_id }}
+          spec-id: ${{ github.event.inputs.spec_id }}
+          baseline-collection-id: ${{ github.event.inputs.baseline_collection_id }}
+          smoke-collection-id: ${{ github.event.inputs.smoke_collection_id }}
+          contract-collection-id: ${{ github.event.inputs.contract_collection_id }}
+          collection-sync-mode: ${{ github.event.inputs.collection_sync_mode }}
+          spec-sync-mode: ${{ github.event.inputs.spec_sync_mode }}
+          release-label: ${{ github.event.inputs.release_label }}
+          monitor-id: ${{ github.event.inputs.monitor_id }}
+          mock-url: ${{ github.event.inputs.mock_url }}
+          monitor-cron: ${{ github.event.inputs.monitor_cron }}
+          spec-path: dist/openapi.bundled.yaml
+          spec-url: https://raw.githubusercontent.com/${{ github.repository }}/bundled-specs/openapi.yaml
+          generate-ci-workflow: false
+          repo-write-mode: commit-only
+          domain: workshop-pilot
+          domain-code: OR
+          requester-email: ${{ github.event.inputs.requester_email }}
+          environments-json: '["stage"]'
+          env-runtime-urls-json: '{"stage":"https://stage.api.example.com"}'
+          governance-mapping-json: '{"workshop-pilot":"Workshop Pilot"}'
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}

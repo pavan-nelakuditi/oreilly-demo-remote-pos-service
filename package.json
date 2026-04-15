@@ -1,0 +1,29 @@
+{
+  "name": "oreilly-remote-pos-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/app.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "bundle:spec": "node ./scripts/bundle-spec.mjs",
+    "validate:specs": "node ./scripts/validate-specs.mjs",
+    "check:breaking": "node ./scripts/check-breaking.mjs",
+    "ci": "npm run validate:specs && npm run typecheck && npm test && npm run check:breaking"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^12.1.0",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.6.0",
+    "light-my-request": "^6.6.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.4",
+    "yaml": "^2.8.1"
+  }
+}
+

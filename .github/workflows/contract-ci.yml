@@ -1,0 +1,39 @@
+name: Contract CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pavan-nelakuditi/oreilly-shared-contracts
+          ref: v0
+          path: shared-contracts
+          token: ${{ secrets.SHARED_CONTRACTS_READ_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Validate specs
+        run: npm run validate:specs
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Check breaking changes
+        run: npm run check:breaking
+      - name: Upload bundled spec artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-bundled
+          path: dist/openapi.bundled.yaml
+          if-no-files-found: error

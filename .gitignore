@@ -1,0 +1,5 @@
+node_modules/
+dist/
+coverage/
+shared-contracts/
+.DS_Store
