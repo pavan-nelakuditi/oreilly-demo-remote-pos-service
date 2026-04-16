@@ -60,6 +60,14 @@ on:
         required: false
         default: workshop.owner@example.com
         type: string
+      repo_write_mode:
+        description: Repo mutation mode for generated Postman assets
+        required: true
+        type: choice
+        default: commit-and-push
+        options:
+          - commit-and-push
+          - commit-only
       environments_json:
         description: JSON array of environment slugs to create
         required: false
@@ -125,7 +133,7 @@ jobs:
           spec-path: dist/openapi.bundled.yaml
           spec-url: https://raw.githubusercontent.com/pavan-nelakuditi/Spechub/main/remote-pos/openapi.yaml
           generate-ci-workflow: false
-          repo-write-mode: commit-only
+          repo-write-mode: ${{ github.event.inputs.repo_write_mode }}
           domain: workshop-pilot
           domain-code: OR
           requester-email: ${{ github.event.inputs.requester_email }}
