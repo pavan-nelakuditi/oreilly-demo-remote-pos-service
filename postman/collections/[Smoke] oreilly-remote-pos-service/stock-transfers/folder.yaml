@@ -1,0 +1,5 @@
+type: folder
+name: stock-transfers
+items:
+  - ref: ./{transferId}/folder.yaml
+  - ref: ./Create a stock transfer.request.yaml

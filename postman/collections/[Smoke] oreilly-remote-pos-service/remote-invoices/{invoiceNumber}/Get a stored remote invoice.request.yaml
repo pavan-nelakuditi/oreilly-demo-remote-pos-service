@@ -1,0 +1,78 @@
+type: http
+name: Get a stored remote invoice
+url: '{{baseUrl}}/remote-invoices/:invoiceNumber'
+method: GET
+headers:
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: invoiceNumber
+    value: string
+scripts:
+  - type: afterResponse
+    code:
+      - // [Smoke] Auto-generated test assertions
+      - pm.test('Status code is successful (2xx)', function () {
+      - '    pm.response.to.be.success;'
+      - '});'
+      - pm.test('Response time is acceptable', function () {
+      - '    var threshold = parseInt(pm.environment.get(''RESPONSE_TIME_THRESHOLD'') || ''2000'', 10);'
+      - '    pm.expect(pm.response.responseTime).to.be.below(threshold);'
+      - '});'
+      - pm.test('Response body is not empty', function () {
+      - '    if (pm.response.code !== 204) {'
+      - '        var body = pm.response.text();'
+      - '        pm.expect(body.length).to.be.above(0);'
+      - '    }'
+      - '});'
+    language: text/javascript
+examples:
+  - response:
+      statusCode: 200
+      statusText: OK
+      body:
+        type: json
+        content: |-
+          {
+            "invoiceNumber": "INV-1001",
+            "storeNumber": 221,
+            "counterNumber": 4,
+            "customer": {
+              "customerNumber": 90001234
+            },
+            "delivery": true,
+            "items": [
+              {
+                "line": "IGN",
+                "item": "PLUG-001",
+                "quantity": 2,
+                "price": 12.99
+              }
+            ],
+            "freight": 5,
+            "serviceCharges": 2.5,
+            "invoiceTotal": 33.48,
+            "transferResponses": [],
+            "customerValidationStatus": "validated",
+            "notificationStatus": "accepted",
+            "createdAt": "2026-04-10T12:00:00.000Z"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Stored remote invoice
+  - response:
+      statusCode: 404
+      statusText: Not Found
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Requested resource was not found.
