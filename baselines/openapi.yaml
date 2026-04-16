@@ -140,6 +140,7 @@ components:
           type: integer
           format: int64
           minimum: 1
+          example: 90001234
     LineItemQuantityWithPrice:
       type: object
       required:
