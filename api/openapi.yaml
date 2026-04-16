@@ -133,7 +133,6 @@ components:
   schemas:
     CustomerRef:
       type: object
-      additionalProperties: false
       required:
         - customerNumber
       properties:
@@ -143,7 +142,6 @@ components:
           minimum: 1
     LineItemQuantityWithPrice:
       type: object
-      additionalProperties: false
       required:
         - line
         - item
@@ -172,7 +170,6 @@ components:
         - pending
     StockTransferCreateRequest:
       type: object
-      additionalProperties: false
       required:
         - counterNumber
         - receivingStoreNumber
@@ -207,7 +204,6 @@ components:
             $ref: '../shared-contracts/common-schemas.yaml#/components/schemas/LineItemQuantity'
     StockTransferResponse:
       type: object
-      additionalProperties: false
       required:
         - transferId
         - status
@@ -229,7 +225,6 @@ components:
             $ref: '../shared-contracts/common-schemas.yaml#/components/schemas/LineItemQuantity'
     RemoteInvoiceCreateRequest:
       type: object
-      additionalProperties: false
       required:
         - storeNumber
         - counterNumber
@@ -278,7 +273,6 @@ components:
             $ref: '#/components/schemas/StockTransferResponse'
     RemoteInvoiceCreateResponse:
       type: object
-      additionalProperties: false
       required:
         - invoiceNumber
         - invoiceTotal
@@ -309,7 +303,6 @@ components:
             - failed
     RemoteInvoice:
       type: object
-      additionalProperties: false
       required:
         - invoiceNumber
         - storeNumber
