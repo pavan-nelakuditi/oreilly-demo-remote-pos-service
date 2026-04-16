@@ -1,0 +1,186 @@
+name: Postman Gated CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  gated:
+    if: github.event_name != 'push' || github.event.head_commit.author.name != 'Postman CSE'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pavan-nelakuditi/oreilly-shared-contracts
+          ref: v0
+          path: shared-contracts
+          token: ${{ secrets.SHARED_CONTRACTS_READ_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Validate specs
+        run: npm run validate:specs
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Test
+        run: npm test
+      - name: Check breaking changes
+        run: npm run check:breaking
+      - name: Publish bundled spec to Spechub
+        env:
+          SPECHUB_WRITE_TOKEN: ${{ secrets.SPECHUB_WRITE_TOKEN }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
+        run: |
+          rm -rf /tmp/spechub
+          git clone "https://x-access-token:${SPECHUB_WRITE_TOKEN}@github.com/pavan-nelakuditi/Spechub.git" /tmp/spechub
+          cd /tmp/spechub
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p remote-pos
+          cp "$GITHUB_WORKSPACE/dist/openapi.bundled.yaml" ./remote-pos/openapi.yaml
+          git add remote-pos/openapi.yaml
+          git diff --cached --quiet || git commit -m "chore: publish bundled remote pos spec"
+          git push origin main
+      - name: Resolve existing Postman resource IDs
+        id: postman_resources
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import YAML from 'yaml';
+
+          const outputPath = process.env.GITHUB_OUTPUT;
+          const outputs = {
+            workspace_id: '',
+            spec_id: '',
+            baseline_collection_id: '',
+            smoke_collection_id: '',
+            contract_collection_id: '',
+            mock_url: '',
+            monitor_id: ''
+          };
+
+          const resourcesPath = '.postman/resources.yaml';
+          if (fs.existsSync(resourcesPath)) {
+            const resources = YAML.parse(fs.readFileSync(resourcesPath, 'utf8')) || {};
+            const cloudResources = resources.cloudResources || {};
+            const collections = cloudResources.collections || {};
+            const specs = cloudResources.specs || {};
+
+            outputs.workspace_id = String(resources.workspace?.id || '');
+            outputs.spec_id = String(Object.values(specs)[0] || '');
+
+            for (const [filePath, uid] of Object.entries(collections)) {
+              const value = String(uid || '');
+              if (!outputs.baseline_collection_id && filePath.includes('[Baseline]')) {
+                outputs.baseline_collection_id = value;
+              }
+              if (!outputs.smoke_collection_id && filePath.includes('[Smoke]')) {
+                outputs.smoke_collection_id = value;
+              }
+              if (!outputs.contract_collection_id && filePath.includes('[Contract]')) {
+                outputs.contract_collection_id = value;
+              }
+            }
+          }
+
+          const serialized = Object.entries(outputs)
+            .map(([key, value]) => `${key}=${String(value).replace(/\n/g, '%0A')}`)
+            .join('\n');
+          fs.appendFileSync(outputPath, `${serialized}\n`);
+          NODE
+      - name: Run Postman API onboarding
+        uses: postman-cs/postman-api-onboarding-action@main
+        with:
+          project-name: ${{ github.event.repository.name }}
+          workspace-id: ${{ steps.postman_resources.outputs.workspace_id }}
+          spec-id: ${{ steps.postman_resources.outputs.spec_id }}
+          baseline-collection-id: ${{ steps.postman_resources.outputs.baseline_collection_id }}
+          smoke-collection-id: ${{ steps.postman_resources.outputs.smoke_collection_id }}
+          contract-collection-id: ${{ steps.postman_resources.outputs.contract_collection_id }}
+          collection-sync-mode: refresh
+          spec-sync-mode: update
+          release-label: ''
+          monitor-id: ${{ steps.postman_resources.outputs.monitor_id }}
+          mock-url: ${{ steps.postman_resources.outputs.mock_url }}
+          monitor-cron: ''
+          spec-path: dist/openapi.bundled.yaml
+          spec-url: https://raw.githubusercontent.com/pavan-nelakuditi/Spechub/main/remote-pos/openapi.yaml
+          generate-ci-workflow: false
+          repo-write-mode: commit-and-push
+          domain: workshop-pilot
+          domain-code: OR
+          requester-email: workshop.owner@example.com
+          environments-json: '["TEST"]'
+          env-runtime-urls-json: '{"TEST":"http://localhost:3000"}'
+          governance-mapping-json: '{"workshop-pilot":"Workshop Pilot"}'
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Resolve synced Postman resource IDs
+        id: synced_postman_resources
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import YAML from 'yaml';
+
+          const outputPath = process.env.GITHUB_OUTPUT;
+          const resources = YAML.parse(fs.readFileSync('.postman/resources.yaml', 'utf8')) || {};
+          const cloudResources = resources.cloudResources || {};
+          const collections = cloudResources.collections || {};
+          const environments = cloudResources.environments || {};
+
+          const contractCollectionId = Object.entries(collections).find(([filePath]) =>
+            filePath.includes('[Contract]')
+          )?.[1];
+          const environmentId = Object.values(environments)[0];
+
+          if (!contractCollectionId || !environmentId) {
+            throw new Error('Missing synced Postman collection or environment IDs after onboarding.');
+          }
+
+          fs.appendFileSync(
+            outputPath,
+            `contract_collection_id=${contractCollectionId}\nenvironment_id=${environmentId}\n`
+          );
+          NODE
+      - name: Install Postman CLI
+        run: curl -o- "https://dl-cli.pstmn.io/install/unix.sh" | sh
+      - name: Login to Postman CLI
+        run: postman login --with-api-key "${{ secrets.POSTMAN_API_KEY }}"
+      - name: Run generated contract collection against localhost
+        run: |
+          node --import tsx ./src/app.ts >/tmp/remote-pos-service.log 2>&1 &
+          APP_PID=$!
+          trap 'kill $APP_PID' EXIT
+
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/health >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+
+          curl -fsS http://localhost:3000/health >/dev/null
+          postman collection run "${{ steps.synced_postman_resources.outputs.contract_collection_id }}" \
+            -e "${{ steps.synced_postman_resources.outputs.environment_id }}" \
+            --folder remote-invoices \
+            --env-var CI=true
+          postman collection run "${{ steps.synced_postman_resources.outputs.contract_collection_id }}" \
+            -e "${{ steps.synced_postman_resources.outputs.environment_id }}" \
+            --folder stock-transfers \
+            --env-var CI=true
+      - name: Upload service log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: remote-pos-service-log
+          path: /tmp/remote-pos-service.log
+          if-no-files-found: ignore
