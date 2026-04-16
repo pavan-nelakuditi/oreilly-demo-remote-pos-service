@@ -11,19 +11,19 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 9918,
-      "counterNumber": 8635,
+      "storeNumber": 3364,
+      "counterNumber": 7436,
       "customer": {
         "customerNumber": 90001234
       },
-      "delivery": true,
+      "delivery": false,
       "items": [
         {
           "line": "string",
           "item": "string",
-          "quantity": 2898,
-          "price": 2934.800275007019,
-          "corePrice": 5582.794924318712
+          "quantity": 7373,
+          "price": 1529.1727687017942,
+          "corePrice": 8882.840329492905
         }
       ],
       "shippingInstructions": "string",
@@ -32,42 +32,42 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 4174.449658448567,
-      "serviceCharges": 2532.9982854159084,
+      "freight": 7633.489442938954,
+      "serviceCharges": 9900.22632503455,
       "stockTransfers": [
         {
           "transferId": "string",
-          "status": "success",
+          "status": "failure",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 6472
+              "quantity": 9304
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 3147
+              "quantity": 3440
             }
           ]
         },
         {
           "transferId": "string",
-          "status": "success",
+          "status": "failure",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
-              "item": "st",
-              "quantity": 6471
+              "item": "string",
+              "quantity": 4002
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 9951
+              "quantity": 6417
             }
           ]
         }
