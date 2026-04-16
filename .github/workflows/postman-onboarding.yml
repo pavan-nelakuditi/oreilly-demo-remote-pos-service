@@ -60,6 +60,16 @@ on:
         required: false
         default: workshop.owner@example.com
         type: string
+      environments_json:
+        description: JSON array of environment slugs to create
+        required: false
+        default: '["TEST"]'
+        type: string
+      env_runtime_urls_json:
+        description: JSON map of environment slug to runtime base URL
+        required: false
+        default: '{"TEST":"http://localhost:3000"}'
+        type: string
 
 jobs:
   onboarding:
@@ -122,8 +132,8 @@ jobs:
           domain: workshop-pilot
           domain-code: OR
           requester-email: ${{ github.event.inputs.requester_email }}
-          environments-json: '["stage"]'
-          env-runtime-urls-json: '{"stage":"https://stage.api.example.com"}'
+          environments-json: ${{ github.event.inputs.environments_json }}
+          env-runtime-urls-json: ${{ github.event.inputs.env_runtime_urls_json }}
           governance-mapping-json: '{"workshop-pilot":"Workshop Pilot"}'
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
           postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
