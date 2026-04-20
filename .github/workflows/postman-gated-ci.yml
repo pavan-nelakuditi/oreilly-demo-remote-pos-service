@@ -49,6 +49,72 @@ jobs:
           git add remote-pos/openapi.yaml
           git diff --cached --quiet || git commit -m "chore: publish bundled remote pos spec"
           git push origin main
+      - name: Debug local spec context before onboarding
+        run: |
+          echo "pwd=$(pwd)"
+          echo "github.workspace=${{ github.workspace }}"
+          echo "github.repository=${{ github.repository }}"
+          echo "github.ref=${{ github.ref }}"
+          echo "github.sha=${{ github.sha }}"
+          git rev-parse HEAD
+          echo "--- top level ---"
+          ls -la
+          echo "--- api ---"
+          ls -la api
+          echo "--- baselines ---"
+          ls -la baselines
+          echo "--- .postman ---"
+          ls -la .postman || true
+          test -f api/openapi.yaml && echo "found api/openapi.yaml"
+          test -f baselines/openapi.yaml && echo "found baselines/openapi.yaml"
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import path from 'node:path';
+          import YAML from 'yaml';
+
+          const ignoredDirs = new Set(['.git', '.omc', '.omx', '.llm-plans', 'node_modules', 'dist']);
+          const results = [];
+
+          function isOpenApiSpec(filePath) {
+            if (!/\.(json|yaml|yml)$/.test(filePath)) return false;
+            try {
+              const raw = fs.readFileSync(filePath, 'utf8');
+              const parsed = filePath.endsWith('.json') ? JSON.parse(raw) : YAML.parse(raw);
+              return Boolean(
+                parsed &&
+                  typeof parsed === 'object' &&
+                  ((parsed.swagger === '2.0' && parsed.paths && typeof parsed.paths === 'object') ||
+                    (typeof parsed.openapi === 'string' && parsed.paths && typeof parsed.paths === 'object'))
+              );
+            } catch {
+              return false;
+            }
+          }
+
+          function visit(currentDir) {
+            for (const entry of fs.readdirSync(currentDir, { withFileTypes: true })) {
+              if (ignoredDirs.has(entry.name)) continue;
+              const fullPath = path.join(currentDir, entry.name);
+              if (entry.isDirectory()) {
+                visit(fullPath);
+                continue;
+              }
+              if (entry.isFile() && isOpenApiSpec(fullPath)) {
+                results.push(fullPath.split(path.sep).join('/'));
+              }
+            }
+          }
+
+          visit('.');
+          console.log('discovered-specs=' + JSON.stringify(results.sort()));
+
+          if (fs.existsSync('.postman/resources.yaml')) {
+            const resources = YAML.parse(fs.readFileSync('.postman/resources.yaml', 'utf8')) || {};
+            console.log('preexisting-cloud-specs=' + JSON.stringify(resources.cloudResources?.specs || {}));
+          } else {
+            console.log('preexisting-cloud-specs={}');
+          }
+          NODE
       - name: Resolve existing Postman resource IDs
         id: postman_resources
         run: |
@@ -96,7 +162,8 @@ jobs:
             .join('\n');
           fs.appendFileSync(outputPath, `${serialized}\n`);
           NODE
-      - name: Run Postman API onboarding
+      - id: onboarding
+        name: Run Postman API onboarding
         uses: postman-cs/postman-api-onboarding-action@main
         with:
           project-name: ${{ github.event.repository.name }}
@@ -124,6 +191,23 @@ jobs:
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
           postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Debug Postman onboarding outputs
+        if: always()
+        run: |
+          echo "workspace-id=${{ steps.onboarding.outputs.workspace-id }}"
+          echo "spec-id=${{ steps.onboarding.outputs.spec-id }}"
+          echo "baseline-collection-id=${{ steps.onboarding.outputs.baseline-collection-id }}"
+          echo "smoke-collection-id=${{ steps.onboarding.outputs.smoke-collection-id }}"
+          echo "contract-collection-id=${{ steps.onboarding.outputs.contract-collection-id }}"
+          echo "bootstrap-outcome=${{ steps.onboarding.outputs.bootstrap-outcome }}"
+          echo "repo-sync-outcome=${{ steps.onboarding.outputs.repo-sync-outcome }}"
+          echo "commit-sha=${{ steps.onboarding.outputs.commit-sha }}"
+          echo "--- .postman files ---"
+          find .postman -maxdepth 2 -type f | sort || true
+          echo "--- resources.yaml ---"
+          test -f .postman/resources.yaml && cat .postman/resources.yaml || echo "missing .postman/resources.yaml"
+          echo "--- workflows.yaml ---"
+          test -f .postman/workflows.yaml && cat .postman/workflows.yaml || echo "missing .postman/workflows.yaml"
       - name: Resolve synced Postman resource IDs
         id: synced_postman_resources
         run: |
