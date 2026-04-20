@@ -11,8 +11,8 @@ body:
   type: json
   content: |-
     {
-      "counterNumber": 2521,
-      "receivingStoreNumber": 2148,
+      "counterNumber": 9938,
+      "receivingStoreNumber": 116,
       "customer": {
         "customerNumber": 90001234
       },
@@ -21,7 +21,7 @@ body:
         {
           "line": "string",
           "item": "string",
-          "quantity": 5890
+          "quantity": 5125
         }
       ],
       "shipToName": "string",
@@ -62,13 +62,13 @@ examples:
             "items": [
               {
                 "line": "string",
-                "item": "string",
-                "quantity": 4420
+                "item": "str",
+                "quantity": 1230
               },
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 4967
+                "quantity": 265
               }
             ]
           }

@@ -7,7 +7,7 @@ headers:
     value: application/json
 pathVariables:
   - key: transferId
-    value: string
+    value: ST-2001
 examples:
   - response:
       statusCode: 200
@@ -17,19 +17,19 @@ examples:
         content: |-
           {
             "transferId": "string",
-            "status": "failure",
+            "status": "pending",
             "location": "string",
             "locationCityState": "string",
             "items": [
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 6595
+                "quantity": 6118
               },
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 4675
+                "quantity": 9747
               }
             ]
           }

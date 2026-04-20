@@ -7,7 +7,7 @@ headers:
     value: application/json
 pathVariables:
   - key: invoiceNumber
-    value: string
+    value: INV-1001
 scripts:
   - type: afterResponse
     code:

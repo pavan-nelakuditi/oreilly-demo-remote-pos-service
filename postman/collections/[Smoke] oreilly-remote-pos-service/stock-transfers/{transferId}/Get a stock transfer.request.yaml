@@ -7,7 +7,7 @@ headers:
     value: application/json
 pathVariables:
   - key: transferId
-    value: string
+    value: ST-2001
 scripts:
   - type: afterResponse
     code:
@@ -41,13 +41,13 @@ examples:
             "items": [
               {
                 "line": "string",
-                "item": "string",
-                "quantity": 4420
+                "item": "str",
+                "quantity": 1230
               },
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 4967
+                "quantity": 265
               }
             ]
           }
