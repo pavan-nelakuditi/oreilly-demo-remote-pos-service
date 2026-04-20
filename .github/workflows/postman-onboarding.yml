@@ -130,7 +130,7 @@ jobs:
           monitor-id: ${{ github.event.inputs.monitor_id }}
           mock-url: ${{ github.event.inputs.mock_url }}
           monitor-cron: ${{ github.event.inputs.monitor_cron }}
-          spec-path: dist/openapi.bundled.yaml
+          spec-path: api/openapi.yaml
           spec-url: https://raw.githubusercontent.com/pavan-nelakuditi/Spechub/main/remote-pos/openapi.yaml
           generate-ci-workflow: false
           repo-write-mode: ${{ github.event.inputs.repo_write_mode }}

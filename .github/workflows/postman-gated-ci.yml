@@ -111,7 +111,7 @@ jobs:
           monitor-id: ${{ steps.postman_resources.outputs.monitor_id }}
           mock-url: ${{ steps.postman_resources.outputs.mock_url }}
           monitor-cron: ''
-          spec-path: dist/openapi.bundled.yaml
+          spec-path: api/openapi.yaml
           spec-url: https://raw.githubusercontent.com/pavan-nelakuditi/Spechub/main/remote-pos/openapi.yaml
           generate-ci-workflow: false
           repo-write-mode: commit-and-push
