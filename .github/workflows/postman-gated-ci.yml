@@ -175,6 +175,7 @@ jobs:
 
           postman collection run "${{ steps.synced_postman_resources.outputs.contract_collection_id }}" \
             -e "${{ steps.synced_postman_resources.outputs.environment_id }}" \
+            --report-events \
             --env-var CI=true
       - name: Upload service log on failure
         if: failure()
