@@ -11,19 +11,19 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 4848,
-      "counterNumber": 2568,
+      "storeNumber": 1553,
+      "counterNumber": 7203,
       "customer": {
         "customerNumber": 90001234
       },
-      "delivery": true,
+      "delivery": false,
       "items": [
         {
           "line": "string",
           "item": "string",
-          "quantity": 4088,
-          "price": 2432.870399938876,
-          "corePrice": 9416.310240554862
+          "quantity": 5546,
+          "price": 3589.390631875733,
+          "corePrice": 181.71263994431365
         }
       ],
       "shippingInstructions": "string",
@@ -32,8 +32,8 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 3982.4092740723227,
-      "serviceCharges": 970.5134887281241,
+      "freight": 1695.0414428723714,
+      "serviceCharges": 7012.972900328594,
       "stockTransfers": [
         {
           "transferId": "string",
@@ -42,14 +42,14 @@ body:
           "locationCityState": "string",
           "items": [
             {
-              "line": "string",
+              "line": "str",
               "item": "string",
-              "quantity": 9341
+              "quantity": 8373
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 8280
+              "quantity": 6128
             }
           ]
         },
@@ -60,49 +60,16 @@ body:
           "locationCityState": "string",
           "items": [
             {
-              "line": "string",
+              "line": "str",
               "item": "string",
-              "quantity": 7008
+              "quantity": 7149
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 5133
+              "quantity": 5334
             }
           ]
         }
       ]
     }
-examples:
-  - response:
-      statusCode: 201
-      statusText: Created
-      body:
-        type: json
-        content: |-
-          {
-            "invoiceNumber": "INV-1001",
-            "invoiceTotal": 41.98,
-            "transferResponses": [],
-            "customerValidationStatus": "skipped",
-            "notificationStatus": "skipped"
-          }
-      headers:
-        - key: Content-Type
-          value: application/json
-    name: Remote invoice created
-  - response:
-      statusCode: 400
-      statusText: Bad Request
-      body:
-        type: json
-        content: |-
-          {
-            "code": "string",
-            "message": "string",
-            "correlationId": "string"
-          }
-      headers:
-        - key: Content-Type
-          value: application/json
-    name: Request payload failed API boundary validation.
