@@ -106,6 +106,37 @@ let transferCounter = 2001;
 const invoices = new Map<string, RemoteInvoice>();
 const stockTransfers = new Map<string, StockTransferResponse>();
 
+function seedWorkshopRecords(): void {
+  const seededTransfer: StockTransferResponse = {
+    transferId: 'ST-2001',
+    status: 'success',
+    location: 'Store 118',
+    locationCityState: 'Tulsa, OK',
+    items: [{ line: 'IGN', item: 'PLUG-001', quantity: 2 }]
+  };
+
+  const seededInvoice: RemoteInvoice = {
+    invoiceNumber: 'INV-1001',
+    storeNumber: 221,
+    counterNumber: 4,
+    customer: { customerNumber: 90001234 },
+    delivery: true,
+    items: [{ line: 'IGN', item: 'PLUG-001', quantity: 2, price: 12.99 }],
+    freight: 5,
+    serviceCharges: 2.5,
+    transferResponses: [],
+    invoiceTotal: 33.48,
+    customerValidationStatus: 'validated',
+    notificationStatus: 'accepted',
+    createdAt: '2026-04-10T12:00:00.000Z'
+  };
+
+  stockTransfers.set(seededTransfer.transferId, seededTransfer);
+  invoices.set(seededInvoice.invoiceNumber, seededInvoice);
+  transferCounter = 2002;
+  invoiceCounter = 1002;
+}
+
 function roundMoney(value: number): number {
   return Math.round(value * 100) / 100;
 }
@@ -204,3 +235,5 @@ export function resetStore(): void {
   invoices.clear();
   stockTransfers.clear();
 }
+
+seedWorkshopRecords();
