@@ -1,0 +1,4 @@
+type: folder
+name: '{invoiceNumber}'
+items:
+  - ref: ./Get a stored remote invoice.request.yaml

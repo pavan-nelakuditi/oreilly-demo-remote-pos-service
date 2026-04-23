@@ -1,0 +1,5 @@
+type: folder
+name: remote-invoices
+items:
+  - ref: ./{invoiceNumber}/folder.yaml
+  - ref: ./Create a remote invoice.request.yaml

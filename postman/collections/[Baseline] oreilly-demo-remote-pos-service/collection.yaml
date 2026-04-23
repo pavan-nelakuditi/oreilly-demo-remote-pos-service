@@ -1,0 +1,13 @@
+$schema: https://schema.postman.com/json/draft-2020-12/collection/v3.0.0/
+type: collection
+name: '[Baseline] oreilly-demo-remote-pos-service'
+description: |
+  Workshop hero API showing reference-based customer usage for operational flows.
+id: c4f31595-ef74-40e9-87cc-8e11ef347ffd
+variables:
+  - key: baseUrl
+    value: http://localhost:3000
+    type: any
+items:
+  - ref: ./remote-invoices/folder.yaml
+  - ref: ./stock-transfers/folder.yaml

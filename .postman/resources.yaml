@@ -1,0 +1,22 @@
+workspace:
+  id: ac0ecf5f-a274-46eb-84f4-5af04ff37b62
+localResources:
+  collections:
+    - ../postman/collections/[Baseline] oreilly-demo-remote-pos-service
+    - ../postman/collections/[Smoke] oreilly-demo-remote-pos-service
+    - ../postman/collections/[Contract] oreilly-demo-remote-pos-service
+  environments:
+    - ../postman/environments/TEST.postman_environment.json
+  specs:
+    - ../api/openapi.bundled.yaml
+    - ../api/openapi.yaml
+    - ../baselines/openapi.yaml
+cloudResources:
+  collections:
+    ../postman/collections/[Baseline] oreilly-demo-remote-pos-service: 54270406-c4f31595-ef74-40e9-87cc-8e11ef347ffd
+    ../postman/collections/[Smoke] oreilly-demo-remote-pos-service: 54270406-248d34ad-0075-45b6-bc2c-4d6bd1f103c7
+    ../postman/collections/[Contract] oreilly-demo-remote-pos-service: 54270406-13e06423-7d92-47b3-a327-6772470c6f53
+  environments:
+    ../postman/environments/TEST.postman_environment.json: 54270406-dc3d5c94-0c8d-4feb-b7d0-39c7ed387650
+  specs:
+    ../api/openapi.bundled.yaml: b9fa21fb-5e2f-42ac-8204-f71b1107f626

@@ -1,0 +1,54 @@
+type: http
+name: Get a stock transfer
+url: '{{baseUrl}}/stock-transfers/:transferId'
+method: GET
+headers:
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: transferId
+    value: ST-2001
+examples:
+  - response:
+      statusCode: 200
+      statusText: OK
+      body:
+        type: json
+        content: |-
+          {
+            "transferId": "string",
+            "status": "pending",
+            "location": "string",
+            "locationCityState": "string",
+            "items": [
+              {
+                "line": "stri",
+                "item": "string",
+                "quantity": 8436
+              },
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 7909
+              }
+            ]
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Stock transfer details
+  - response:
+      statusCode: 404
+      statusText: Not Found
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Requested resource was not found.

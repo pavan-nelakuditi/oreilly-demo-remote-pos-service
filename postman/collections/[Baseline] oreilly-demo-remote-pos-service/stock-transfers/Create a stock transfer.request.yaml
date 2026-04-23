@@ -1,0 +1,75 @@
+type: http
+name: Create a stock transfer
+url: '{{baseUrl}}/stock-transfers'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "counterNumber": 9857,
+      "receivingStoreNumber": 5829,
+      "customer": {
+        "customerNumber": 90001234
+      },
+      "orderType": "string",
+      "itemDetails": [
+        {
+          "line": "string",
+          "item": "string",
+          "quantity": 5436
+        }
+      ],
+      "shipToName": "string",
+      "shipToAddress": "string",
+      "shipToCity": "string",
+      "shipToState": "string"
+    }
+examples:
+  - response:
+      statusCode: 201
+      statusText: Created
+      body:
+        type: json
+        content: |-
+          {
+            "transferId": "string",
+            "status": "pending",
+            "location": "string",
+            "locationCityState": "string",
+            "items": [
+              {
+                "line": "stri",
+                "item": "string",
+                "quantity": 8436
+              },
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 7909
+              }
+            ]
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Stock transfer created
+  - response:
+      statusCode: 400
+      statusText: Bad Request
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Request payload failed API boundary validation.
