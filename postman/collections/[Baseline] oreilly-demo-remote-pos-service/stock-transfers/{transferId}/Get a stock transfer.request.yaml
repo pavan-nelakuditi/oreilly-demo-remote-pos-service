@@ -22,14 +22,14 @@ examples:
             "locationCityState": "string",
             "items": [
               {
-                "line": "stri",
+                "line": "string",
                 "item": "string",
-                "quantity": 8436
+                "quantity": 3487
               },
               {
                 "line": "string",
-                "item": "string",
-                "quantity": 7909
+                "item": "s",
+                "quantity": 9967
               }
             ]
           }
