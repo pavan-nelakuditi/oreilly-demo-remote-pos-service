@@ -20,7 +20,6 @@ jobs:
           repository: pavan-nelakuditi/oreilly-shared-contracts
           ref: v0
           path: shared-contracts
-          token: ${{ secrets.SHARED_CONTRACTS_READ_TOKEN }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
