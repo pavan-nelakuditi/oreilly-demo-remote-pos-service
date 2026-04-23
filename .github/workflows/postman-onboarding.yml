@@ -100,21 +100,6 @@ jobs:
         run: npm install
       - name: Validate and bundle spec
         run: npm run validate:specs
-      - name: Publish bundled spec branch
-        env:
-          SPECHUB_WRITE_TOKEN: ${{ secrets.SPECHUB_WRITE_TOKEN }}
-          GITHUB_WORKSPACE: ${{ github.workspace }}
-        run: |
-          rm -rf /tmp/spechub
-          git clone "https://x-access-token:${SPECHUB_WRITE_TOKEN}@github.com/pavan-nelakuditi/Spechub.git" /tmp/spechub
-          cd /tmp/spechub
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          mkdir -p remote-pos
-          cp "$GITHUB_WORKSPACE/dist/openapi.bundled.yaml" ./remote-pos/openapi.yaml
-          git add remote-pos/openapi.yaml
-          git diff --cached --quiet || git commit -m "chore: publish bundled remote pos spec"
-          git push origin main
       - name: Debug local spec context before onboarding
         run: |
           echo "pwd=$(pwd)"
@@ -197,8 +182,8 @@ jobs:
           monitor-id: ${{ github.event.inputs.monitor_id }}
           mock-url: ${{ github.event.inputs.mock_url }}
           monitor-cron: ${{ github.event.inputs.monitor_cron }}
-          spec-path: api/openapi.yaml
-          spec-url: https://raw.githubusercontent.com/pavan-nelakuditi/Spechub/main/remote-pos/openapi.yaml
+          spec-path: api/openapi.bundled.yaml
+          spec-url: https://raw.githubusercontent.com/pavan-nelakuditi/oreilly-demo-remote-pos-service/main/api/openapi.bundled.yaml
           generate-ci-workflow: false
           repo-write-mode: ${{ github.event.inputs.repo_write_mode }}
           domain: workshop-pilot

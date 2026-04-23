@@ -7,7 +7,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 const sourcePath = path.join(rootDir, 'api/openapi.yaml');
 const sharedContractsPath = path.join(rootDir, 'shared-contracts/common-schemas.yaml');
-const distPath = path.join(rootDir, 'dist/openapi.bundled.yaml');
+const distPath = path.join(rootDir, 'api/openapi.bundled.yaml');
 const sharedContractsRefPrefix = '../shared-contracts/common-schemas.yaml';
 
 try {
