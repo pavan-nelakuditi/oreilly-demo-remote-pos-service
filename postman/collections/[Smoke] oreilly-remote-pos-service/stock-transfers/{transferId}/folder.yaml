@@ -1,4 +1,0 @@
-type: folder
-name: '{transferId}'
-items:
-  - ref: ./Get a stock transfer.request.yaml
