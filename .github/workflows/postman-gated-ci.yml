@@ -36,6 +36,7 @@ jobs:
       - name: Build production runtime
         run: npm run build
       - name: Publish bundled spec to repo
+        id: bundled_spec
         run: |
           cp dist/openapi.bundled.yaml api/openapi.bundled.yaml
           git config user.name "Postman CSE"
@@ -43,6 +44,7 @@ jobs:
           git add api/openapi.bundled.yaml
           git diff --cached --quiet || git commit -m "chore: sync bundled spec"
           git diff --cached --quiet || git push origin HEAD:main
+          echo "spec_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
       - name: Debug local spec context before onboarding
         run: |
           echo "pwd=$(pwd)"
@@ -172,8 +174,7 @@ jobs:
           monitor-id: ${{ steps.postman_resources.outputs.monitor_id }}
           mock-url: ${{ steps.postman_resources.outputs.mock_url }}
           monitor-cron: ''
-          spec-path: api/openapi.yaml
-          spec-url: https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/api/openapi.bundled.yaml
+          spec-path: api/openapi.bundled.yaml
           generate-ci-workflow: false
           repo-write-mode: commit-and-push
           domain: workshop-pilot
