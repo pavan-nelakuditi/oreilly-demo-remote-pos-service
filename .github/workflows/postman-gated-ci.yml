@@ -240,10 +240,12 @@ jobs:
           const contractCollectionId = Object.entries(collections).find(([filePath]) =>
             filePath.includes('[Contract]')
           )?.[1];
-          const environmentId = Object.values(environments)[0];
+          const environmentId = Object.entries(environments).find(([filePath]) =>
+            filePath.endsWith('TEST.postman_environment.json')
+          )?.[1];
 
           if (!contractCollectionId || !environmentId) {
-            throw new Error('Missing synced Postman contract collection or environment ID after onboarding.');
+            throw new Error('Missing synced Postman contract collection or TEST environment ID after onboarding.');
           }
 
           fs.appendFileSync(

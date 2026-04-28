@@ -1,0 +1,33 @@
+name: Spec Governance
+
+on:
+  pull_request:
+    paths:
+      - 'api/openapi.yaml'
+      - 'scripts/check-governance.mjs'
+      - 'scripts/validate-specs.mjs'
+      - 'scripts/bundle-spec.mjs'
+      - '.github/workflows/spec-governance.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-spec:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pavan-nelakuditi/oreilly-shared-contracts
+          ref: v0
+          path: shared-contracts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Lint and validate spec
+        run: npm run validate:specs
+      - name: Run governance checks
+        run: npm run check:governance
