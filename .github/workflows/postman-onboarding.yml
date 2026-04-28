@@ -76,7 +76,7 @@ on:
       env_runtime_urls_json:
         description: JSON map of environment slug to runtime base URL
         required: false
-        default: '{"TEST":"http://localhost:3000","STAGE":"https://stage.oreilly-demo.example.com","PROD":"https://api.oreilly-demo.example.com"}'
+        default: '{"TEST":"http://localhost:3000","STAGE":"http://k8s-ingressn-ingressn-85f6f7b4d5-ac9798de040a319d.elb.us-west-1.amazonaws.com","PROD":"https://api.oreilly-demo.example.com"}'
         type: string
 
 jobs:
