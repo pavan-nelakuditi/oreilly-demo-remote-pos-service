@@ -243,7 +243,7 @@ jobs:
         run: postman login --with-api-key "${{ secrets.POSTMAN_API_KEY }}"
       - name: Run generated contract collection against localhost
         run: |
-          node --import tsx ./src/app.ts >/tmp/remote-pos-service.log 2>&1 &
+          node --import tsx ./src/server.ts >/tmp/remote-pos-service.log 2>&1 &
           APP_PID=$!
           trap 'kill $APP_PID' EXIT
 
