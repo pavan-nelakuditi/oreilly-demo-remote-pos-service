@@ -11,19 +11,19 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 865,
-      "counterNumber": 9085,
+      "storeNumber": 9561,
+      "counterNumber": 3079,
       "customer": {
         "customerNumber": 90001234
       },
-      "delivery": false,
+      "delivery": true,
       "items": [
         {
           "line": "string",
           "item": "string",
-          "quantity": 4152,
-          "price": 5713.639024066289,
-          "corePrice": 351.6800004837162
+          "quantity": 1768,
+          "price": 8793.101577108013,
+          "corePrice": 5191.3222799252635
         }
       ],
       "shippingInstructions": "string",
@@ -32,42 +32,42 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 4641.450420332704,
-      "serviceCharges": 6618.77678875364,
+      "freight": 206.4775947544284,
+      "serviceCharges": 9300.342900999523,
       "stockTransfers": [
         {
           "transferId": "string",
-          "status": "pending",
+          "status": "failure",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 1367
+              "quantity": 8996
             },
             {
-              "line": "str",
+              "line": "string",
               "item": "string",
-              "quantity": 7952
+              "quantity": 690
             }
           ]
         },
         {
           "transferId": "string",
-          "status": "pending",
+          "status": "success",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 2160
+              "quantity": 8869
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 7063
+              "quantity": 5396
             }
           ]
         }
