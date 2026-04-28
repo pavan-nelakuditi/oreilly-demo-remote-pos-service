@@ -78,19 +78,19 @@ examples:
         content: |-
           {
             "transferId": "string",
-            "status": "success",
+            "status": "pending",
             "location": "string",
             "locationCityState": "string",
             "items": [
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 8438
+                "quantity": 6869
               },
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 7570
+                "quantity": 9714
               }
             ]
           }
