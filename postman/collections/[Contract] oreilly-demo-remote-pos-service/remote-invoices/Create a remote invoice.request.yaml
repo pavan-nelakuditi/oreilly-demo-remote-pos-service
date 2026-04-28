@@ -11,8 +11,8 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 9268,
-      "counterNumber": 5373,
+      "storeNumber": 9806,
+      "counterNumber": 8407,
       "customer": {
         "customerNumber": 90001234
       },
@@ -21,9 +21,9 @@ body:
         {
           "line": "string",
           "item": "string",
-          "quantity": 1792,
-          "price": 8871.20389834472,
-          "corePrice": 8233.618190199093
+          "quantity": 6808,
+          "price": 8108.81364647855,
+          "corePrice": 9863.47990375386
         }
       ],
       "shippingInstructions": "string",
@@ -32,42 +32,42 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 289.2940924269194,
-      "serviceCharges": 1220.1677300215952,
+      "freight": 967.359080057073,
+      "serviceCharges": 1904.2083587802217,
       "stockTransfers": [
         {
           "transferId": "string",
-          "status": "pending",
+          "status": "success",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 4454
+              "quantity": 5810
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 321
+              "quantity": 6177
             }
           ]
         },
         {
           "transferId": "string",
-          "status": "failure",
+          "status": "success",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 3151
+              "quantity": 7658
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 1183
+              "quantity": 9924
             }
           ]
         }
