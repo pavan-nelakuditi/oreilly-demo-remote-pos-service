@@ -36,9 +36,8 @@ docker compose -f docker-compose.yml up --build
 
 Set these repository secrets before running CI or Postman onboarding:
 
-- `SHARED_CONTRACTS_READ_TOKEN`: token with read access to `pavan-nelakuditi/oreilly-shared-contracts`
 - `POSTMAN_API_KEY`: Postman API key for bootstrap and repo sync
 - `POSTMAN_ACCESS_TOKEN`: Postman access token for governance and internal integration calls
-- `SPECHUB_WRITE_TOKEN`: token with write access to `pavan-nelakuditi/Spechub` so the workflow can publish `dist/openapi.bundled.yaml` to `remote-pos/openapi.yaml`
+- `GITHUB_TOKEN`: used by GitHub Actions to write `dist/openapi.bundled.yaml` back to `api/openapi.bundled.yaml` in this repo
 
 GitHub automatically provides `GITHUB_TOKEN` for same-repo writes during the workflow run.
