@@ -1,8 +1,8 @@
 workflows:
   syncSpecToCollection:
     - spec: ../api/openapi.yaml
-      collection: ../postman/collections/[Baseline] oreilly-remote-pos-service
+      collection: ../postman/collections/[Baseline] oreilly-demo-remote-pos-service
     - spec: ../api/openapi.yaml
-      collection: ../postman/collections/[Smoke] oreilly-remote-pos-service
+      collection: ../postman/collections/[Smoke] oreilly-demo-remote-pos-service
     - spec: ../api/openapi.yaml
-      collection: ../postman/collections/[Contract] oreilly-remote-pos-service
+      collection: ../postman/collections/[Contract] oreilly-demo-remote-pos-service
