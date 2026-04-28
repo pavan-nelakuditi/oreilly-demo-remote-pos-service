@@ -71,12 +71,12 @@ on:
       environments_json:
         description: JSON array of environment slugs to create
         required: false
-        default: '["TEST"]'
+        default: '["TEST","STAGE","PROD"]'
         type: string
       env_runtime_urls_json:
         description: JSON map of environment slug to runtime base URL
         required: false
-        default: '{"TEST":"http://localhost:3000"}'
+        default: '{"TEST":"http://localhost:3000","STAGE":"https://stage.oreilly-demo.example.com","PROD":"https://api.oreilly-demo.example.com"}'
         type: string
 
 jobs:

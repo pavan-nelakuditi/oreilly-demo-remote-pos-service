@@ -7,6 +7,8 @@ localResources:
     - ../postman/collections/[Contract] oreilly-remote-pos-service
   environments:
     - ../postman/environments/TEST.postman_environment.json
+    - ../postman/environments/STAGE.postman_environment.json
+    - ../postman/environments/PROD.postman_environment.json
   specs:
     - ../api/openapi.yaml
     - ../baselines/openapi.yaml

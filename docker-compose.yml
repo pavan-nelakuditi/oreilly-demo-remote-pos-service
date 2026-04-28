@@ -1,0 +1,31 @@
+services:
+  customers-service:
+    build:
+      context: /Users/pavan.nelakuditi@postman.com/Documents/Codex/oreilly-customers-service
+    image: oreilly-customers-service:dev
+    ports:
+      - "3001:3001"
+
+  order-notifications-service:
+    build:
+      context: /Users/pavan.nelakuditi@postman.com/Documents/Codex/oreilly-order-notifications-service
+    image: oreilly-order-notifications-service:dev
+    ports:
+      - "3002:3002"
+
+  remote-pos-service:
+    build:
+      context: .
+    image: oreilly-remote-pos-service:dev
+    depends_on:
+      - customers-service
+      - order-notifications-service
+    environment:
+      CUSTOMERS_SERVICE_BASE_URL: http://customers-service:3001
+      ORDER_NOTIFICATIONS_SERVICE_BASE_URL: http://order-notifications-service:3002
+      CUSTOMERS_SERVICE_TIMEOUT_MS: "2000"
+      ORDER_NOTIFICATIONS_SERVICE_TIMEOUT_MS: "2000"
+      ENABLE_CUSTOMER_VALIDATION: "true"
+      ENABLE_ORDER_NOTIFICATION: "true"
+    ports:
+      - "3000:3000"

@@ -4,13 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tsx src/app.ts",
+    "dev": "tsx src/server.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/src/server.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "bundle:spec": "node ./scripts/bundle-spec.mjs",
     "validate:specs": "node ./scripts/validate-specs.mjs",
     "check:breaking": "node ./scripts/check-breaking.mjs",
-    "ci": "npm run validate:specs && npm run typecheck && npm test && npm run check:breaking"
+    "ci": "npm run validate:specs && npm run typecheck && npm test && npm run check:breaking && npm run build"
   },
   "dependencies": {
     "express": "^4.21.2"
@@ -26,4 +28,3 @@
     "yaml": "^2.8.1"
   }
 }
-

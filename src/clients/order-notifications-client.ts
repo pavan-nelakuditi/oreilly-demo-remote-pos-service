@@ -2,6 +2,7 @@ import type {
   NotificationStatus,
   OReillyInvoiceSnapshot
 } from '../data/store.js';
+import { fetchJson } from './fetch-json.js';
 
 export interface OrderNotificationsClient {
   publishInvoiceSnapshot(snapshot: OReillyInvoiceSnapshot): Promise<Exclude<NotificationStatus, 'skipped' | 'failed'>>;
@@ -10,9 +11,11 @@ export interface OrderNotificationsClient {
 export function createOrderNotificationsClient(options: {
   baseUrl?: string;
   enabled?: boolean;
+  timeoutMs?: number;
 }): OrderNotificationsClient {
   const enabled = options.enabled ?? false;
   const baseUrl = String(options.baseUrl || '').replace(/\/+$/, '');
+  const timeoutMs = options.timeoutMs ?? 2_000;
 
   return {
     async publishInvoiceSnapshot(
@@ -22,13 +25,17 @@ export function createOrderNotificationsClient(options: {
         throw new Error('Notifications client is disabled');
       }
 
-      const response = await fetch(`${baseUrl}/stock-transfer-orders/notifications`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(snapshot)
-      });
+      const response = await fetchJson(
+        `${baseUrl}/stock-transfer-orders/notifications`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(snapshot),
+          timeoutMs
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Notification publish failed with status ${response.status}`);
@@ -39,4 +46,3 @@ export function createOrderNotificationsClient(options: {
     }
   };
 }
-

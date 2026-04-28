@@ -34,6 +34,8 @@ jobs:
         run: npm test
       - name: Check breaking changes
         run: npm run check:breaking
+      - name: Build production runtime
+        run: npm run build
       - name: Publish bundled spec to Spechub
         env:
           SPECHUB_WRITE_TOKEN: ${{ secrets.SPECHUB_WRITE_TOKEN }}
@@ -185,8 +187,8 @@ jobs:
           domain: workshop-pilot
           domain-code: OR
           requester-email: workshop.owner@example.com
-          environments-json: '["TEST"]'
-          env-runtime-urls-json: '{"TEST":"http://localhost:3000"}'
+          environments-json: '["TEST","STAGE","PROD"]'
+          env-runtime-urls-json: '{"TEST":"http://localhost:3000","STAGE":"https://stage.oreilly-demo.example.com","PROD":"https://api.oreilly-demo.example.com"}'
           governance-mapping-json: '{"workshop-pilot":"Workshop Pilot"}'
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
           postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}

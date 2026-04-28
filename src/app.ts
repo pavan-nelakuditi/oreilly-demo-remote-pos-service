@@ -35,12 +35,14 @@ export function createApp(options?: {
   app.use('/remote-invoices', createRemoteInvoicesRouter({
     customersClient: options?.customersClient ?? createCustomersClient({
       baseUrl: process.env.CUSTOMERS_SERVICE_BASE_URL,
-      enabled: process.env.ENABLE_CUSTOMER_VALIDATION === 'true'
+      enabled: process.env.ENABLE_CUSTOMER_VALIDATION === 'true',
+      timeoutMs: Number(process.env.CUSTOMERS_SERVICE_TIMEOUT_MS || 2000)
     }),
     orderNotificationsClient:
       options?.orderNotificationsClient ?? createOrderNotificationsClient({
         baseUrl: process.env.ORDER_NOTIFICATIONS_SERVICE_BASE_URL,
-        enabled: process.env.ENABLE_ORDER_NOTIFICATION === 'true'
+        enabled: process.env.ENABLE_ORDER_NOTIFICATION === 'true',
+        timeoutMs: Number(process.env.ORDER_NOTIFICATIONS_SERVICE_TIMEOUT_MS || 2000)
       }),
     enableCustomerValidation:
       options?.enableCustomerValidation ?? process.env.ENABLE_CUSTOMER_VALIDATION === 'true',
@@ -61,10 +63,3 @@ export function createApp(options?: {
 }
 
 export const app = createApp();
-
-if (process.argv[1]?.endsWith('app.ts')) {
-  const port = Number(process.env.PORT || 3000);
-  app.listen(port, () => {
-    console.log(`remote-pos-service listening on http://localhost:${port}`);
-  });
-}

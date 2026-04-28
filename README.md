@@ -19,6 +19,17 @@ npm run validate:specs
 npm run typecheck
 npm test
 npm run check:breaking
+npm run build
+npm run start
+```
+
+## Lightweight Multi-Service Run
+
+Use Docker Compose to run `remote-pos-service` with live calls to
+`customers-service` and `order-notifications-service`:
+
+```bash
+docker compose -f docker-compose.yml up --build
 ```
 
 ## Required Secrets

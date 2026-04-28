@@ -1,4 +1,5 @@
 import type { InvoiceCustomerSnapshot } from '../data/store.js';
+import { fetchJson } from './fetch-json.js';
 
 export interface CustomersClient {
   getCustomerSnapshot(customerNumber: number): Promise<InvoiceCustomerSnapshot | null>;
@@ -7,9 +8,11 @@ export interface CustomersClient {
 export function createCustomersClient(options: {
   baseUrl?: string;
   enabled?: boolean;
+  timeoutMs?: number;
 }): CustomersClient {
   const enabled = options.enabled ?? false;
   const baseUrl = String(options.baseUrl || '').replace(/\/+$/, '');
+  const timeoutMs = options.timeoutMs ?? 2_000;
 
   return {
     async getCustomerSnapshot(customerNumber: number): Promise<InvoiceCustomerSnapshot | null> {
@@ -17,7 +20,10 @@ export function createCustomersClient(options: {
         return null;
       }
 
-      const response = await fetch(`${baseUrl}/customers/pro/${customerNumber}`);
+      const response = await fetchJson(
+        `${baseUrl}/customers/pro/${customerNumber}`,
+        { timeoutMs }
+      );
       if (response.status === 404) {
         return null;
       }
@@ -49,4 +55,3 @@ export function createCustomersClient(options: {
     }
   };
 }
-
