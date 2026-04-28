@@ -11,7 +11,6 @@
     "test": "vitest run",
     "bundle:spec": "node ./scripts/bundle-spec.mjs",
     "validate:specs": "node ./scripts/validate-specs.mjs",
-    "check:governance": "node ./scripts/check-governance.mjs",
     "check:breaking": "node ./scripts/check-breaking.mjs",
     "ci": "npm run validate:specs && npm run typecheck && npm test && npm run check:breaking && npm run build"
   },

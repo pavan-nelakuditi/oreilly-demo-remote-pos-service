@@ -1,20 +1,24 @@
-name: Spec Governance
+name: API Governance Check (Postman Native)
 
 on:
   pull_request:
+    branches:
+      - main
     paths:
       - 'api/openapi.yaml'
-      - 'scripts/check-governance.mjs'
       - 'scripts/validate-specs.mjs'
       - 'scripts/bundle-spec.mjs'
       - '.github/workflows/spec-governance.yml'
   workflow_dispatch:
 
 jobs:
-  validate-spec:
+  governance:
+    name: Postman Spec Governance
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      issues: write
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
@@ -22,12 +26,136 @@ jobs:
           repository: pavan-nelakuditi/oreilly-shared-contracts
           ref: v0
           path: shared-contracts
+
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+
       - name: Install dependencies
         run: npm install
-      - name: Lint and validate spec
+
+      - name: Validate and bundle spec
         run: npm run validate:specs
-      - name: Run governance checks
-        run: npm run check:governance
+
+      - name: Install Postman CLI
+        run: curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Sign in to Postman
+        run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+
+      - name: Lint spec against Postman Governance rules
+        id: lint
+        run: |
+          set +e
+          postman spec lint dist/openapi.bundled.yaml \
+            --fail-severity WARNING \
+            --output JSON > lint-results.json 2> lint-stderr.log
+          LINT_EXIT=$?
+          cat lint-stderr.log >&2
+          echo "exit_code=$LINT_EXIT" >> "$GITHUB_OUTPUT"
+          if [ $LINT_EXIT -eq 0 ]; then
+            echo "outcome=success" >> "$GITHUB_OUTPUT"
+          else
+            echo "outcome=failure" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post governance results as PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          LINT_OUTCOME: ${{ steps.lint.outputs.outcome }}
+        with:
+          script: |
+            const fs = require('fs');
+            const passed = process.env.LINT_OUTCOME === 'success';
+            const emoji = passed ? ':white_check_mark:' : ':x:';
+            const status = passed ? 'PASSED' : 'FAILED';
+
+            let violationSummary = '';
+            let violationTable = '';
+            try {
+              const raw = fs.readFileSync('lint-results.json', 'utf8');
+              const data = JSON.parse(raw);
+              const violations = data.violations || [];
+
+              if (violations.length === 0 && passed) {
+                violationSummary = '\n*No violations found.*';
+              } else {
+                const errors = violations.filter(v => v.severity === 'ERROR').length;
+                const warnings = violations.filter(v => v.severity === 'WARNING').length;
+                const info = violations.filter(v => v.severity === 'INFO').length;
+                const hints = violations.filter(v => v.severity === 'HINT').length;
+
+                violationSummary = [
+                  '| Severity | Count |',
+                  '|----------|-------|',
+                  `| :red_circle: Errors | ${errors} |`,
+                  `| :warning: Warnings | ${warnings} |`,
+                  `| :information_source: Info | ${info} |`,
+                  `| :bulb: Hints | ${hints} |`,
+                  `| **Total** | **${violations.length}** |`
+                ].join('\n');
+
+                const rows = violations.map(v => {
+                  const sev = v.severity === 'ERROR' ? ':red_circle:'
+                    : v.severity === 'WARNING' ? ':warning:'
+                    : v.severity === 'INFO' ? ':information_source:'
+                    : ':bulb:';
+                  const issue = v.issue || '';
+                  const type = v['issue type'] || '';
+                  const line = v['line number'] || '';
+                  const path = v.path || '';
+                  return `| ${sev} ${v.severity} | ${issue} | ${type} | L${line} | \`${path}\` |`;
+                });
+
+                violationTable = [
+                  '',
+                  '<details>',
+                  `<summary>Violation details (${violations.length})</summary>`,
+                  '',
+                  '| Severity | Issue | Type | Line | Path |',
+                  '|----------|-------|------|------|------|',
+                  ...rows,
+                  '',
+                  '</details>'
+                ].join('\n');
+              }
+            } catch (e) {
+              violationSummary = passed
+                ? '\n*No violations found.*'
+                : '\n*Could not parse violation details. Check the workflow run log.*';
+            }
+
+            const body = [
+              `## ${emoji} API Governance Report (${status})`,
+              '',
+              'Validated against Postman governance rules using `postman spec lint` on `dist/openapi.bundled.yaml`.',
+              '',
+              violationSummary,
+              violationTable,
+              '',
+              '<details>',
+              '<summary>How this works</summary>',
+              '',
+              '- The service spec is bundled locally before linting so shared contract refs are resolved',
+              '- Governance rules are defined in Postman',
+              '- The Postman CLI validates the bundled spec on every PR',
+              '- PRs are blocked if any WARNING or ERROR level violations are found',
+              '',
+              '</details>',
+              '',
+              '*Generated by Postman CLI governance workflow*'
+            ].join('\n');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body
+            });
+
+      - name: Enforce governance gate
+        if: steps.lint.outputs.outcome == 'failure'
+        run: |
+          echo "::error::Postman governance check failed - spec has WARNING or ERROR level violations"
+          exit 1
