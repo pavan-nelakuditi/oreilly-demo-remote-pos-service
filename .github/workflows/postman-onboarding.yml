@@ -106,9 +106,25 @@ jobs:
           git config user.name "Postman CSE"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add api/openapi.bundled.yaml
-          git diff --cached --quiet || git commit -m "chore: sync bundled spec"
-          git diff --cached --quiet || git push origin HEAD:main
-          echo "spec_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if git diff --cached --quiet; then
+            echo "spec_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore: sync bundled spec"
+            git push origin HEAD:main
+            echo "spec_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Wait for bundled spec to be readable
+        env:
+          SPEC_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.bundled_spec.outputs.spec_ref }}/api/openapi.bundled.yaml
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS "$SPEC_URL" >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Bundled spec did not become readable at $SPEC_URL" >&2
+          exit 1
       - name: Debug local spec context before onboarding
         run: |
           echo "pwd=$(pwd)"
@@ -191,7 +207,8 @@ jobs:
           monitor-id: ${{ github.event.inputs.monitor_id }}
           mock-url: ${{ github.event.inputs.mock_url }}
           monitor-cron: ${{ github.event.inputs.monitor_cron }}
-          spec-path: api/openapi.bundled.yaml
+          spec-path: api/openapi.yaml
+          spec-url: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.bundled_spec.outputs.spec_ref }}/api/openapi.bundled.yaml
           generate-ci-workflow: false
           repo-write-mode: ${{ github.event.inputs.repo_write_mode }}
           domain: workshop-pilot
