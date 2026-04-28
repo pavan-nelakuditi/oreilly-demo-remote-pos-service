@@ -11,8 +11,8 @@ body:
   type: json
   content: |-
     {
-      "counterNumber": 7663,
-      "receivingStoreNumber": 2438,
+      "counterNumber": 6776,
+      "receivingStoreNumber": 6318,
       "customer": {
         "customerNumber": 90001234
       },
@@ -21,7 +21,7 @@ body:
         {
           "line": "string",
           "item": "string",
-          "quantity": 6207
+          "quantity": 9975
         }
       ],
       "shipToName": "string",
@@ -56,19 +56,19 @@ examples:
         content: |-
           {
             "transferId": "string",
-            "status": "failure",
+            "status": "pending",
             "location": "string",
             "locationCityState": "string",
             "items": [
               {
                 "line": "string",
-                "item": "str",
-                "quantity": 858
+                "item": "string",
+                "quantity": 392
               },
               {
                 "line": "string",
-                "item": "stri",
-                "quantity": 868
+                "item": "string",
+                "quantity": 8852
               }
             ]
           }
