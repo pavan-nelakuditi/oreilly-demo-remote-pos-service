@@ -26,3 +26,47 @@ scripts:
       - '    }'
       - '});'
     language: text/javascript
+examples:
+  - response:
+      statusCode: 200
+      statusText: OK
+      body:
+        type: json
+        content: |-
+          {
+            "transferId": "string",
+            "status": "pending",
+            "location": "string",
+            "locationCityState": "string",
+            "items": [
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 2292
+              },
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 8571
+              }
+            ]
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Stock transfer details
+  - response:
+      statusCode: 404
+      statusText: Not Found
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Requested resource was not found.

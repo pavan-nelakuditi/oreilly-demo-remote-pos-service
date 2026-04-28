@@ -11,8 +11,8 @@ body:
   type: json
   content: |-
     {
-      "counterNumber": 2917,
-      "receivingStoreNumber": 8919,
+      "counterNumber": 3935,
+      "receivingStoreNumber": 3219,
       "customer": {
         "customerNumber": 90001234
       },
@@ -21,7 +21,7 @@ body:
         {
           "line": "string",
           "item": "string",
-          "quantity": 6593
+          "quantity": 2086
         }
       ],
       "shipToName": "string",
@@ -47,3 +47,47 @@ scripts:
       - '    }'
       - '});'
     language: text/javascript
+examples:
+  - response:
+      statusCode: 201
+      statusText: Created
+      body:
+        type: json
+        content: |-
+          {
+            "transferId": "string",
+            "status": "pending",
+            "location": "string",
+            "locationCityState": "string",
+            "items": [
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 2292
+              },
+              {
+                "line": "string",
+                "item": "string",
+                "quantity": 8571
+              }
+            ]
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Stock transfer created
+  - response:
+      statusCode: 400
+      statusText: Bad Request
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Request payload failed API boundary validation.

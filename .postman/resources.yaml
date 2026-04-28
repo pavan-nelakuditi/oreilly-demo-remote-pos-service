@@ -19,5 +19,7 @@ cloudResources:
     ../postman/collections/[Contract] oreilly-remote-pos-service: 50585768-5c7918d7-f0b3-4102-a804-50880fbf3ba3
   environments:
     ../postman/environments/TEST.postman_environment.json: 50585768-486b7ae9-5488-4dde-9b62-15e58623aae0
+    ../postman/environments/STAGE.postman_environment.json: 50585768-aef65039-3002-4fc5-a22b-a9b4cfb0bbb0
+    ../postman/environments/PROD.postman_environment.json: 50585768-8976ab80-a3d5-4cbc-b099-1f2e9c715f3e
   specs:
     ../api/openapi.yaml: 09b8208d-405b-4558-aef1-8758271b575e

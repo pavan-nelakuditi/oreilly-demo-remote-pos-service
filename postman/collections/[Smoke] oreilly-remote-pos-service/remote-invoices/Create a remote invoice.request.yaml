@@ -11,19 +11,19 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 8318,
-      "counterNumber": 1056,
+      "storeNumber": 2315,
+      "counterNumber": 9510,
       "customer": {
         "customerNumber": 90001234
       },
-      "delivery": true,
+      "delivery": false,
       "items": [
         {
           "line": "string",
           "item": "string",
-          "quantity": 7870,
-          "price": 8595.453904988399,
-          "corePrice": 2982.8418000101365
+          "quantity": 9156,
+          "price": 6298.144597421287,
+          "corePrice": 9977.958784438431
         }
       ],
       "shippingInstructions": "string",
@@ -32,42 +32,42 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 1745.0369255293708,
-      "serviceCharges": 7165.236587913766,
+      "freight": 8619.653032264287,
+      "serviceCharges": 144.0337621657184,
       "stockTransfers": [
         {
           "transferId": "string",
-          "status": "failure",
+          "status": "pending",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 7229
+              "quantity": 6889
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 3703
+              "quantity": 3002
             }
           ]
         },
         {
           "transferId": "string",
-          "status": "success",
+          "status": "pending",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 5693
+              "quantity": 9017
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 2874
+              "quantity": 7185
             }
           ]
         }
@@ -91,3 +91,36 @@ scripts:
       - '    }'
       - '});'
     language: text/javascript
+examples:
+  - response:
+      statusCode: 201
+      statusText: Created
+      body:
+        type: json
+        content: |-
+          {
+            "invoiceNumber": "INV-1001",
+            "invoiceTotal": 41.98,
+            "transferResponses": [],
+            "customerValidationStatus": "skipped",
+            "notificationStatus": "skipped"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Remote invoice created
+  - response:
+      statusCode: 400
+      statusText: Bad Request
+      body:
+        type: json
+        content: |-
+          {
+            "code": "string",
+            "message": "string",
+            "correlationId": "string"
+          }
+      headers:
+        - key: Content-Type
+          value: application/json
+    name: Request payload failed API boundary validation.

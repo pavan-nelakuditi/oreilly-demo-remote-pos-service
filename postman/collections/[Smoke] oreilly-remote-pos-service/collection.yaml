@@ -7,6 +7,7 @@ id: 605401d4-d9bc-4b18-a6e2-104daffa768e
 variables:
   - key: baseUrl
     value: http://localhost:3000
+    type: any
 items:
   - ref: ./remote-invoices/folder.yaml
   - ref: ./stock-transfers/folder.yaml
