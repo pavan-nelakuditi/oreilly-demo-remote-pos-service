@@ -24,12 +24,12 @@ examples:
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 1352
+                "quantity": 748
               },
               {
                 "line": "string",
-                "item": "string",
-                "quantity": 3911
+                "item": "strin",
+                "quantity": 2983
               }
             ]
           }

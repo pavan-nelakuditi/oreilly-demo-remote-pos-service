@@ -11,19 +11,19 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 5654,
-      "counterNumber": 475,
+      "storeNumber": 2480,
+      "counterNumber": 9796,
       "customer": {
         "customerNumber": 90001234
       },
-      "delivery": true,
+      "delivery": false,
       "items": [
         {
           "line": "string",
           "item": "string",
-          "quantity": 5392,
-          "price": 6643.043860888,
-          "corePrice": 2806.6292906662516
+          "quantity": 4767,
+          "price": 8524.124936061738,
+          "corePrice": 7182.285011653928
         }
       ],
       "shippingInstructions": "string",
@@ -32,9 +32,27 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 9357.833999797032,
-      "serviceCharges": 3888.2113838499645,
+      "freight": 5325.2279211765945,
+      "serviceCharges": 7943.65435680517,
       "stockTransfers": [
+        {
+          "transferId": "string",
+          "status": "failure",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 8445
+            },
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 8968
+            }
+          ]
+        },
         {
           "transferId": "string",
           "status": "pending",
@@ -44,30 +62,12 @@ body:
             {
               "line": "string",
               "item": "string",
-              "quantity": 6291
+              "quantity": 9365
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 4195
-            }
-          ]
-        },
-        {
-          "transferId": "string",
-          "status": "success",
-          "location": "string",
-          "locationCityState": "string",
-          "items": [
-            {
-              "line": "string",
-              "item": "string",
-              "quantity": 3899
-            },
-            {
-              "line": "string",
-              "item": "string",
-              "quantity": 1526
+              "quantity": 5644
             }
           ]
         }
