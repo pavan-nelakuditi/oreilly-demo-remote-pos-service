@@ -96,7 +96,7 @@ jobs:
           NODE
       - id: bootstrap
         name: Bootstrap Postman assets
-        uses: postman-cs/postman-bootstrap-action@v0
+        uses: postman-cs/postman-bootstrap-action@main
         with:
           project-name: ${{ github.event.repository.name }}
           workspace-id: ${{ steps.postman_resources.outputs.workspace_id }}
@@ -126,7 +126,7 @@ jobs:
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
       - id: repo_sync
         name: Sync repository and workspace
-        uses: postman-cs/postman-repo-sync-action@v0
+        uses: postman-cs/postman-repo-sync-action@main
         with:
           project-name: ${{ github.event.repository.name }}
           workspace-id: ${{ steps.bootstrap.outputs.workspace-id }}
