@@ -1,26 +1,92 @@
 spec:
-  fileName: openapi.yaml
+  fileName: original.yaml
   title: OReilly Remote POS API
   version: 1.0.0
 flows:
-  - name: Remote POS Stage Smoke
+  - name: OReilly Remote POS API happy path
     type: smoke
     steps:
       - stepKey: create-remote-invoice-1
         operationId: createRemoteInvoice
-        bindings: []
+        name: Create a remote invoice
+        bindings:
+          - fieldKey: customer.customerNumber
+            source: example
+          - fieldKey: storeNumber
+            source: example
+          - fieldKey: counterNumber
+            source: example
+          - fieldKey: delivery
+            source: example
+          - fieldKey: shippingInstructions
+            source: example
+          - fieldKey: shipToName
+            source: example
+          - fieldKey: shipToAddress
+            source: example
+          - fieldKey: shipToCity
+            source: example
+          - fieldKey: shipToState
+            source: example
+          - fieldKey: poNumber
+            source: example
+          - fieldKey: items
+            source: example
+          - fieldKey: freight
+            source: example
+          - fieldKey: serviceCharges
+            source: example
+          - fieldKey: stockTransfers
+            source: example
         extract:
           - variable: createRemoteInvoice.invoiceNumber
             jsonPath: $.invoiceNumber
-          - variable: createRemoteInvoice.customerValidationStatus
-            jsonPath: $.customerValidationStatus
-          - variable: createRemoteInvoice.notificationStatus
-            jsonPath: $.notificationStatus
       - stepKey: get-remote-invoice-2
         operationId: getRemoteInvoice
+        name: Get a stored remote invoice
         bindings:
           - fieldKey: invoiceNumber
             source: prior_output
             sourceStepKey: create-remote-invoice-1
             variable: createRemoteInvoice.invoiceNumber
-        extract: []
+        extract:
+          - variable: getRemoteInvoice.transferId
+            jsonPath: $.transferResponses[0].transferId
+          - variable: getRemoteInvoice.invoiceNumber
+            jsonPath: $.invoiceNumber
+      - stepKey: create-stock-transfer-3
+        operationId: createStockTransfer
+        name: Create a stock transfer
+        bindings:
+          - fieldKey: customer.customerNumber
+            source: example
+          - fieldKey: counterNumber
+            source: example
+          - fieldKey: receivingStoreNumber
+            source: example
+          - fieldKey: orderType
+            source: example
+          - fieldKey: shipToName
+            source: example
+          - fieldKey: shipToAddress
+            source: example
+          - fieldKey: shipToCity
+            source: example
+          - fieldKey: shipToState
+            source: example
+          - fieldKey: itemDetails
+            source: example
+        extract:
+          - variable: createStockTransfer.transferId
+            jsonPath: $.transferId
+      - stepKey: get-stock-transfer-4
+        operationId: getStockTransfer
+        name: Get a stock transfer
+        bindings:
+          - fieldKey: transferId
+            source: prior_output
+            sourceStepKey: create-stock-transfer-3
+            variable: createStockTransfer.transferId
+        extract:
+          - variable: getStockTransfer.transferId
+            jsonPath: $.transferId
