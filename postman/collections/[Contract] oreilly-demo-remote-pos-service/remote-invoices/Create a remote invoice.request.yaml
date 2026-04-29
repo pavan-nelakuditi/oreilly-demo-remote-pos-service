@@ -11,8 +11,8 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 8264,
-      "counterNumber": 4211,
+      "storeNumber": 4866,
+      "counterNumber": 6056,
       "customer": {
         "customerNumber": 90001234
       },
@@ -21,9 +21,9 @@ body:
         {
           "line": "string",
           "item": "string",
-          "quantity": 8838,
-          "price": 9984.811237401,
-          "corePrice": 3753.029173591631
+          "quantity": 1503,
+          "price": 6362.631072940737,
+          "corePrice": 4875.11937724525
         }
       ],
       "shippingInstructions": "string",
@@ -32,27 +32,9 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 2010.042904534415,
-      "serviceCharges": 5246.715918144704,
+      "freight": 6733.88941641683,
+      "serviceCharges": 8027.626978499363,
       "stockTransfers": [
-        {
-          "transferId": "string",
-          "status": "pending",
-          "location": "string",
-          "locationCityState": "string",
-          "items": [
-            {
-              "line": "string",
-              "item": "string",
-              "quantity": 2689
-            },
-            {
-              "line": "string",
-              "item": "string",
-              "quantity": 572
-            }
-          ]
-        },
         {
           "transferId": "string",
           "status": "failure",
@@ -60,14 +42,32 @@ body:
           "locationCityState": "string",
           "items": [
             {
-              "line": "strin",
+              "line": "string",
               "item": "string",
-              "quantity": 5009
+              "quantity": 9228
             },
             {
-              "line": "st",
+              "line": "string",
               "item": "string",
-              "quantity": 3863
+              "quantity": 1973
+            }
+          ]
+        },
+        {
+          "transferId": "string",
+          "status": "success",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 2519
+            },
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 1425
             }
           ]
         }

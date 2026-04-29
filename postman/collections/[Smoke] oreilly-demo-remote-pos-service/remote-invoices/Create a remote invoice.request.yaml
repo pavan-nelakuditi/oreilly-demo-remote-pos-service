@@ -11,8 +11,8 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 2480,
-      "counterNumber": 9796,
+      "storeNumber": 8038,
+      "counterNumber": 8817,
       "customer": {
         "customerNumber": 90001234
       },
@@ -21,9 +21,9 @@ body:
         {
           "line": "string",
           "item": "string",
-          "quantity": 4767,
-          "price": 8524.124936061738,
-          "corePrice": 7182.285011653928
+          "quantity": 4259,
+          "price": 8037.1920497628425,
+          "corePrice": 2760.0371086854693
         }
       ],
       "shippingInstructions": "string",
@@ -32,27 +32,9 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 5325.2279211765945,
-      "serviceCharges": 7943.65435680517,
+      "freight": 5159.576632824176,
+      "serviceCharges": 5042.163369834964,
       "stockTransfers": [
-        {
-          "transferId": "string",
-          "status": "failure",
-          "location": "string",
-          "locationCityState": "string",
-          "items": [
-            {
-              "line": "string",
-              "item": "string",
-              "quantity": 8445
-            },
-            {
-              "line": "string",
-              "item": "string",
-              "quantity": 8968
-            }
-          ]
-        },
         {
           "transferId": "string",
           "status": "pending",
@@ -62,12 +44,30 @@ body:
             {
               "line": "string",
               "item": "string",
-              "quantity": 9365
+              "quantity": 697
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 5644
+              "quantity": 9035
+            }
+          ]
+        },
+        {
+          "transferId": "string",
+          "status": "failure",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 3505
+            },
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 7074
             }
           ]
         }
