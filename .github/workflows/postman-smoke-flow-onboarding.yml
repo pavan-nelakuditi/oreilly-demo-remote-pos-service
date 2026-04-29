@@ -115,7 +115,7 @@ jobs:
           postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
       - id: smoke_flow
         name: Apply curated smoke flow
-        uses: postman-cs/postman-smoke-flow-action@v0
+        uses: pavan-nelakuditi/postman-smoke-flow-action@main
         with:
           project-name: ${{ github.event.repository.name }}
           workspace-id: ${{ steps.bootstrap.outputs.workspace-id }}
