@@ -1,0 +1,159 @@
+name: Postman Smoke Flow Onboarding
+
+on:
+  workflow_dispatch:
+
+jobs:
+  onboarding:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: pavan-nelakuditi/oreilly-shared-contracts
+          ref: v0
+          path: shared-contracts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install dependencies
+        run: npm install
+      - name: Validate and bundle spec
+        run: npm run validate:specs
+      - name: Publish bundled spec to repo
+        id: bundled_spec
+        run: |
+          cp dist/openapi.bundled.yaml api/openapi.bundled.yaml
+          git config user.name "Postman CSE"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add api/openapi.bundled.yaml
+          if git diff --cached --quiet; then
+            echo "spec_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "chore: sync bundled spec"
+            git push origin HEAD:main
+            echo "spec_ref=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Wait for bundled spec to be readable
+        env:
+          SPEC_URL: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.bundled_spec.outputs.spec_ref }}/api/openapi.bundled.yaml
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl -fsS "$SPEC_URL" >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Bundled spec did not become readable at $SPEC_URL" >&2
+          exit 1
+      - name: Resolve existing Postman resource IDs
+        id: postman_resources
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          import YAML from 'yaml';
+
+          const outputPath = process.env.GITHUB_OUTPUT;
+          const outputs = {
+            workspace_id: '',
+            spec_id: '',
+            baseline_collection_id: '',
+            smoke_collection_id: '',
+            contract_collection_id: ''
+          };
+
+          const resourcesPath = '.postman/resources.yaml';
+          if (fs.existsSync(resourcesPath)) {
+            const resources = YAML.parse(fs.readFileSync(resourcesPath, 'utf8')) || {};
+            const cloudResources = resources.cloudResources || {};
+            const collections = cloudResources.collections || {};
+            const specs = cloudResources.specs || {};
+
+            outputs.workspace_id = String(resources.workspace?.id || '');
+            outputs.spec_id = String(specs['../api/openapi.yaml'] || Object.values(specs)[0] || '');
+
+            for (const [filePath, uid] of Object.entries(collections)) {
+              const value = String(uid || '');
+              if (!outputs.baseline_collection_id && filePath.includes('[Baseline]')) {
+                outputs.baseline_collection_id = value;
+              }
+              if (!outputs.smoke_collection_id && filePath.includes('[Smoke]')) {
+                outputs.smoke_collection_id = value;
+              }
+              if (!outputs.contract_collection_id && filePath.includes('[Contract]')) {
+                outputs.contract_collection_id = value;
+              }
+            }
+          }
+
+          const serialized = Object.entries(outputs)
+            .map(([key, value]) => `${key}=${String(value).replace(/\n/g, '%0A')}`)
+            .join('\n');
+          fs.appendFileSync(outputPath, `${serialized}\n`);
+          NODE
+      - id: bootstrap
+        name: Bootstrap Postman assets
+        uses: postman-cs/postman-bootstrap-action@v0
+        with:
+          project-name: ${{ github.event.repository.name }}
+          workspace-id: ${{ steps.postman_resources.outputs.workspace_id }}
+          spec-id: ${{ steps.postman_resources.outputs.spec_id }}
+          baseline-collection-id: ${{ steps.postman_resources.outputs.baseline_collection_id }}
+          smoke-collection-id: ${{ steps.postman_resources.outputs.smoke_collection_id }}
+          contract-collection-id: ${{ steps.postman_resources.outputs.contract_collection_id }}
+          collection-sync-mode: refresh
+          spec-sync-mode: update
+          spec-url: https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.bundled_spec.outputs.spec_ref }}/api/openapi.bundled.yaml
+          domain: workshop-pilot
+          domain-code: OR
+          requester-email: workshop.owner@example.com
+          governance-mapping-json: '{"workshop-pilot":"Workshop Pilot"}'
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+      - id: smoke_flow
+        name: Apply curated smoke flow
+        uses: postman-cs/postman-smoke-flow-action@v0
+        with:
+          project-name: ${{ github.event.repository.name }}
+          workspace-id: ${{ steps.bootstrap.outputs.workspace-id }}
+          spec-id: ${{ steps.bootstrap.outputs.spec-id }}
+          smoke-collection-id: ${{ steps.bootstrap.outputs.smoke-collection-id }}
+          flow-path: .cse-buddy/flows/remote-pos/flow.yaml
+          spec-path: api/openapi.yaml
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+      - id: repo_sync
+        name: Sync repository and workspace
+        uses: postman-cs/postman-repo-sync-action@v0
+        with:
+          project-name: ${{ github.event.repository.name }}
+          workspace-id: ${{ steps.bootstrap.outputs.workspace-id }}
+          baseline-collection-id: ${{ steps.bootstrap.outputs.baseline-collection-id }}
+          smoke-collection-id: ${{ steps.smoke_flow.outputs.smoke-collection-id }}
+          contract-collection-id: ${{ steps.bootstrap.outputs.contract-collection-id }}
+          collection-sync-mode: refresh
+          spec-sync-mode: update
+          generate-ci-workflow: false
+          environments-json: '["TEST","STAGE","PROD"]'
+          env-runtime-urls-json: '{"TEST":"http://localhost:3000","STAGE":"http://k8s-ingressn-ingressn-85f6f7b4d5-ac9798de040a319d.elb.us-west-1.amazonaws.com","PROD":"https://api.oreilly-demo.example.com"}'
+          repo-write-mode: commit-and-push
+          postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+          postman-access-token: ${{ secrets.POSTMAN_ACCESS_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          spec-id: ${{ steps.bootstrap.outputs.spec-id }}
+          spec-path: api/openapi.yaml
+      - name: Debug smoke flow outputs
+        if: always()
+        run: |
+          echo "workspace-id=${{ steps.bootstrap.outputs.workspace-id }}"
+          echo "spec-id=${{ steps.bootstrap.outputs.spec-id }}"
+          echo "baseline-collection-id=${{ steps.bootstrap.outputs.baseline-collection-id }}"
+          echo "smoke-collection-id=${{ steps.smoke_flow.outputs.smoke-collection-id }}"
+          echo "contract-collection-id=${{ steps.bootstrap.outputs.contract-collection-id }}"
+          echo "flow-apply-status=${{ steps.smoke_flow.outputs.flow-apply-status }}"
+          echo "flow-apply-summary-json=${{ steps.smoke_flow.outputs.flow-apply-summary-json }}"
+          echo "repo-sync-monitor-id=${{ steps.repo_sync.outputs.monitor-id }}"
+          echo "repo-sync-mock-url=${{ steps.repo_sync.outputs.mock-url }}"
+          echo "repo-sync-environment-uids-json=${{ steps.repo_sync.outputs.environment-uids-json }}"
