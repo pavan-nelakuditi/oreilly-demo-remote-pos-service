@@ -123,7 +123,18 @@ jobs:
           smoke-collection-id: ${{ steps.bootstrap.outputs.smoke-collection-id }}
           flow-path: .cse-buddy/flows/remote-pos/flow.yaml
           spec-path: api/openapi.yaml
+          debug-dump-path: .debug/postman-smoke-flow/curated-smoke-collection.json
           postman-api-key: ${{ secrets.POSTMAN_API_KEY }}
+      - name: Print smoke flow debug dump
+        if: failure() && steps.smoke_flow.outcome == 'failure'
+        run: |
+          DUMP_PATH=".debug/postman-smoke-flow/curated-smoke-collection.json"
+          if [ -f "$DUMP_PATH" ]; then
+            echo "Smoke flow debug dump: $DUMP_PATH"
+            cat "$DUMP_PATH"
+          else
+            echo "Smoke flow debug dump not found at $DUMP_PATH"
+          fi
       - id: repo_sync
         name: Sync repository and workspace
         uses: postman-cs/postman-repo-sync-action@main
