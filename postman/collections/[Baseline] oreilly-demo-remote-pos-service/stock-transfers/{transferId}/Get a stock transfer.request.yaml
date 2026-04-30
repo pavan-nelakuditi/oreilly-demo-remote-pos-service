@@ -17,19 +17,19 @@ examples:
         content: |-
           {
             "transferId": "string",
-            "status": "success",
+            "status": "failure",
             "location": "string",
             "locationCityState": "string",
             "items": [
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 6115
+                "quantity": 3349
               },
               {
                 "line": "string",
                 "item": "string",
-                "quantity": 9647
+                "quantity": 3613
               }
             ]
           }

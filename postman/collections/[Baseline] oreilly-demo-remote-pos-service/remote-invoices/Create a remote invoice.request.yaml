@@ -11,19 +11,19 @@ body:
   type: json
   content: |-
     {
-      "storeNumber": 3271,
-      "counterNumber": 6708,
+      "storeNumber": 5997,
+      "counterNumber": 5695,
       "customer": {
         "customerNumber": 90001234
       },
-      "delivery": true,
+      "delivery": false,
       "items": [
         {
           "line": "string",
           "item": "string",
-          "quantity": 6327,
-          "price": 4647.276654002392,
-          "corePrice": 8025.280829981305
+          "quantity": 5324,
+          "price": 5951.534253209354,
+          "corePrice": 9366.445849191869
         }
       ],
       "shippingInstructions": "string",
@@ -32,42 +32,42 @@ body:
       "shipToCity": "string",
       "shipToState": "string",
       "poNumber": "string",
-      "freight": 7801.41308114722,
-      "serviceCharges": 2293.4543218576755,
+      "freight": 7066.095306020597,
+      "serviceCharges": 9046.95010257698,
       "stockTransfers": [
         {
           "transferId": "string",
-          "status": "failure",
+          "status": "pending",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 2663
+              "quantity": 5167
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 1567
+              "quantity": 4275
             }
           ]
         },
         {
           "transferId": "string",
-          "status": "failure",
+          "status": "pending",
           "location": "string",
           "locationCityState": "string",
           "items": [
             {
               "line": "string",
               "item": "string",
-              "quantity": 8767
+              "quantity": 6339
             },
             {
               "line": "string",
               "item": "string",
-              "quantity": 9374
+              "quantity": 9091
             }
           ]
         }
