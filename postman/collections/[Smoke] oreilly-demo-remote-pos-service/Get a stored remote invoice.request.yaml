@@ -1,0 +1,58 @@
+type: http
+name: Get a stored remote invoice
+url: '{{baseUrl}}/remote-invoices/:invoiceNumber'
+method: GET
+headers:
+  - key: Accept
+    value: application/json
+pathVariables:
+  - key: invoiceNumber
+    value: '{{invoiceNumber}}'
+scripts:
+  - type: beforeRequest
+    code:
+      - // [Smoke Flow] Auto-generated prerequest script for getRemoteInvoice
+      - pm.collectionVariables.set("invoiceNumber", pm.collectionVariables.get("createRemoteInvoice.invoiceNumber") || '');
+    language: text/javascript
+  - type: afterResponse
+    code:
+      - // [Smoke Flow] Auto-generated test script for getRemoteInvoice
+      - pm.test('Status code is successful (2xx)', function () {
+      - '  pm.response.to.be.success;'
+      - '});'
+      - pm.test('Response time is acceptable', function () {
+      - '  const threshold = parseInt(pm.environment.get(''RESPONSE_TIME_THRESHOLD'') || ''2000'', 10);'
+      - '  pm.expect(pm.response.responseTime).to.be.below(threshold);'
+      - '});'
+      - pm.test('Response body is not empty', function () {
+      - '  if (pm.response.code !== 204) {'
+      - '    pm.expect(pm.response.text().length).to.be.above(0);'
+      - '  }'
+      - '});'
+      - function resolveJsonPath(root, jsonPath) {
+      - '  if (!jsonPath || !jsonPath.startsWith(''$.'')) return undefined;'
+      - '  const segments = jsonPath.slice(2).replace(/\[(\d+)\]/g, ''.$1'').split(''.'').filter(Boolean);'
+      - '  let cursor = root;'
+      - '  for (const segment of segments) {'
+      - '    if (cursor === null || cursor === undefined) return undefined;'
+      - '    cursor = cursor[segment];'
+      - '  }'
+      - '  return cursor;'
+      - '}'
+      - let jsonBody;
+      - try {
+      - '  jsonBody = pm.response.json();'
+      - '} catch {'
+      - '  jsonBody = undefined;'
+      - '}'
+      - pm.test("Extract getRemoteInvoice.transferId", function () {
+      - '  const value = resolveJsonPath(jsonBody, "$.transferResponses[0].transferId");'
+      - '  pm.expect(value, ''expected extracted value to exist'').to.not.be.undefined;'
+      - '  pm.collectionVariables.set("getRemoteInvoice.transferId", typeof value === ''string'' ? value : JSON.stringify(value));'
+      - '});'
+      - pm.test("Extract getRemoteInvoice.invoiceNumber", function () {
+      - '  const value = resolveJsonPath(jsonBody, "$.invoiceNumber");'
+      - '  pm.expect(value, ''expected extracted value to exist'').to.not.be.undefined;'
+      - '  pm.collectionVariables.set("getRemoteInvoice.invoiceNumber", typeof value === ''string'' ? value : JSON.stringify(value));'
+      - '});'
+    language: text/javascript

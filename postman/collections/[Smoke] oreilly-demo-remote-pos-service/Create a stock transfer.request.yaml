@@ -1,0 +1,72 @@
+type: http
+name: Create a stock transfer
+url: '{{baseUrl}}/stock-transfers'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "counterNumber": 337,
+      "receivingStoreNumber": 9547,
+      "customer": {
+        "customerNumber": 90001234
+      },
+      "orderType": "string",
+      "itemDetails": [
+        {
+          "line": "st",
+          "item": "string",
+          "quantity": 6246
+        }
+      ],
+      "shipToName": "string",
+      "shipToAddress": "string",
+      "shipToCity": "string",
+      "shipToState": "string"
+    }
+scripts:
+  - type: beforeRequest
+    code: // [Smoke Flow] Auto-generated prerequest script for createStockTransfer
+    language: text/javascript
+  - type: afterResponse
+    code:
+      - // [Smoke Flow] Auto-generated test script for createStockTransfer
+      - pm.test('Status code is successful (2xx)', function () {
+      - '  pm.response.to.be.success;'
+      - '});'
+      - pm.test('Response time is acceptable', function () {
+      - '  const threshold = parseInt(pm.environment.get(''RESPONSE_TIME_THRESHOLD'') || ''2000'', 10);'
+      - '  pm.expect(pm.response.responseTime).to.be.below(threshold);'
+      - '});'
+      - pm.test('Response body is not empty', function () {
+      - '  if (pm.response.code !== 204) {'
+      - '    pm.expect(pm.response.text().length).to.be.above(0);'
+      - '  }'
+      - '});'
+      - function resolveJsonPath(root, jsonPath) {
+      - '  if (!jsonPath || !jsonPath.startsWith(''$.'')) return undefined;'
+      - '  const segments = jsonPath.slice(2).replace(/\[(\d+)\]/g, ''.$1'').split(''.'').filter(Boolean);'
+      - '  let cursor = root;'
+      - '  for (const segment of segments) {'
+      - '    if (cursor === null || cursor === undefined) return undefined;'
+      - '    cursor = cursor[segment];'
+      - '  }'
+      - '  return cursor;'
+      - '}'
+      - let jsonBody;
+      - try {
+      - '  jsonBody = pm.response.json();'
+      - '} catch {'
+      - '  jsonBody = undefined;'
+      - '}'
+      - pm.test("Extract createStockTransfer.transferId", function () {
+      - '  const value = resolveJsonPath(jsonBody, "$.transferId");'
+      - '  pm.expect(value, ''expected extracted value to exist'').to.not.be.undefined;'
+      - '  pm.collectionVariables.set("createStockTransfer.transferId", typeof value === ''string'' ? value : JSON.stringify(value));'
+      - '});'
+    language: text/javascript

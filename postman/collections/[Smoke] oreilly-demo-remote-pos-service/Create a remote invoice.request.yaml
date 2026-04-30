@@ -1,0 +1,116 @@
+type: http
+name: Create a remote invoice
+url: '{{baseUrl}}/remote-invoices'
+method: POST
+headers:
+  - key: Content-Type
+    value: application/json
+  - key: Accept
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "storeNumber": 2421,
+      "counterNumber": 1679,
+      "customer": {
+        "customerNumber": 90001234
+      },
+      "delivery": false,
+      "items": [
+        {
+          "line": "string",
+          "item": "string",
+          "quantity": 542,
+          "price": 546.6814853933721,
+          "corePrice": 3997.2341060351523
+        }
+      ],
+      "shippingInstructions": "string",
+      "shipToName": "string",
+      "shipToAddress": "string",
+      "shipToCity": "string",
+      "shipToState": "string",
+      "poNumber": "string",
+      "freight": 160.35059923085848,
+      "serviceCharges": 9413.030792915975,
+      "stockTransfers": [
+        {
+          "transferId": "string",
+          "status": "success",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 8393
+            },
+            {
+              "line": "st",
+              "item": "string",
+              "quantity": 9955
+            }
+          ]
+        },
+        {
+          "transferId": "string",
+          "status": "pending",
+          "location": "string",
+          "locationCityState": "string",
+          "items": [
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 831
+            },
+            {
+              "line": "string",
+              "item": "string",
+              "quantity": 7603
+            }
+          ]
+        }
+      ]
+    }
+scripts:
+  - type: beforeRequest
+    code: // [Smoke Flow] Auto-generated prerequest script for createRemoteInvoice
+    language: text/javascript
+  - type: afterResponse
+    code:
+      - // [Smoke Flow] Auto-generated test script for createRemoteInvoice
+      - pm.test('Status code is successful (2xx)', function () {
+      - '  pm.response.to.be.success;'
+      - '});'
+      - pm.test('Response time is acceptable', function () {
+      - '  const threshold = parseInt(pm.environment.get(''RESPONSE_TIME_THRESHOLD'') || ''2000'', 10);'
+      - '  pm.expect(pm.response.responseTime).to.be.below(threshold);'
+      - '});'
+      - pm.test('Response body is not empty', function () {
+      - '  if (pm.response.code !== 204) {'
+      - '    pm.expect(pm.response.text().length).to.be.above(0);'
+      - '  }'
+      - '});'
+      - function resolveJsonPath(root, jsonPath) {
+      - '  if (!jsonPath || !jsonPath.startsWith(''$.'')) return undefined;'
+      - '  const segments = jsonPath.slice(2).replace(/\[(\d+)\]/g, ''.$1'').split(''.'').filter(Boolean);'
+      - '  let cursor = root;'
+      - '  for (const segment of segments) {'
+      - '    if (cursor === null || cursor === undefined) return undefined;'
+      - '    cursor = cursor[segment];'
+      - '  }'
+      - '  return cursor;'
+      - '}'
+      - let jsonBody;
+      - try {
+      - '  jsonBody = pm.response.json();'
+      - '} catch {'
+      - '  jsonBody = undefined;'
+      - '}'
+      - pm.test("Extract createRemoteInvoice.invoiceNumber", function () {
+      - '  const value = resolveJsonPath(jsonBody, "$.invoiceNumber");'
+      - '  pm.expect(value, ''expected extracted value to exist'').to.not.be.undefined;'
+      - '  pm.collectionVariables.set("createRemoteInvoice.invoiceNumber", typeof value === ''string'' ? value : JSON.stringify(value));'
+      - '});'
+    language: text/javascript
